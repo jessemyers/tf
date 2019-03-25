@@ -14,8 +14,8 @@ data "aws_route53_zone" "jessemyers" {
   name = "jessemyers.com."
 }
 
-resource "aws_ses_domain_identity" "contact" {
-  domain = "contact.jessemyers.com"
+resource "aws_ses_domain_identity" "jessemyers" {
+  domain = "jessemyers.com"
 }
 
 resource "aws_route53_record" "contact_verification_record" {
@@ -23,5 +23,5 @@ resource "aws_route53_record" "contact_verification_record" {
   name    = "_amazonses.example.com"
   type    = "TXT"
   ttl     = "600"
-  records = ["${aws_ses_domain_identity.contact.verification_token}"]
+  records = ["${aws_ses_domain_identity.jessemyers.verification_token}"]
 }
