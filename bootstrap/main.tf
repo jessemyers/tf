@@ -4,4 +4,9 @@ provider "aws" {
 
 resource "aws_s3_bucket" "terraform" {
   bucket = "terraform.jessemyers.com"
+  acl    = "private"
+
+  versioning {
+    enabled = true
+  }
 }
