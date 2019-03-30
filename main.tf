@@ -10,31 +10,24 @@ terraform {
   }
 }
 
-data "aws_route53_zone" "jessemyers" {
-  name = "jessemyers.com."
+/* Create an SNS topic and SQS queue for handling SES events.
+ */
+module "ses_queue" {
+  source = "modules/ses_queue"
 }
 
-resource "aws_ses_domain_identity" "jessemyers" {
-  domain = "jessemyers.com"
+/* Configure SES to send and receive mail using the input domain.
+ */
+module "ses_domain" {
+  source    = "modules/ses_domain"
+  domain    = "${var.domain}"
+  region    = "us-west-2"
+  topic_arn = "${module.ses_queue.topic_arn}"
 }
 
-resource "aws_route53_record" "domain_identity_verification_record" {
-  zone_id = "${data.aws_route53_zone.jessemyers.id}"
-  name    = "_amazonses.jessemyers.com"
-  type    = "TXT"
-  ttl     = "600"
-  records = ["${aws_ses_domain_identity.jessemyers.verification_token}"]
-}
-
-resource "aws_ses_domain_dkim" "jessemyers" {
-  domain = "${aws_ses_domain_identity.jessemyers.domain}"
-}
-
-resource "aws_route53_record" "domain_key_verification_record" {
-  count   = 3
-  zone_id = "${data.aws_route53_zone.jessemyers.id}"
-  name    = "${element(aws_ses_domain_dkim.jessemyers.dkim_tokens, count.index)}._domainkey.jessemyers.com"
-  type    = "CNAME"
-  ttl     = "600"
-  records = ["${element(aws_ses_domain_dkim.jessemyers.dkim_tokens, count.index)}.dkim.amazonses.com"]
+/* Create a lambda function to handle SES traffic.
+ */
+module "ses_handler" {
+  source    = "modules/ses_handler"
+  queue_arn = "${module.ses_queue.queue_arn}"
 }
