@@ -53,10 +53,23 @@ resource "aws_lambda_alias" "ses_handler" {
 
 /* Subscribe the latest lambda function to the SNS queue.
  */
-resource "aws_lambda_event_source_mapping" "event_source_mapping" {
+resource "aws_lambda_event_source_mapping" "ses_handler" {
   // processing one message at a time has the simplest error semantics at low volumes
   batch_size       = 1
   event_source_arn = "${var.queue_arn}"
   enabled          = true
   function_name    = "${aws_lambda_alias.ses_handler.arn}"
+}
+
+/* Create a dynamodb table.
+ */
+resource "aws_dynamodb_table" "ses_handler" {
+  name           = "ses"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "email_address"
+
+  attribute {
+    name = "email_address"
+    type = "S"
+  }
 }

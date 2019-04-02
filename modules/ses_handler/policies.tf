@@ -15,7 +15,6 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
 data "aws_iam_policy_document" "ses_handler" {
   statement {
-    sid       = "AllowSQSPermissions"
     effect    = "Allow"
     resources = ["arn:aws:sqs:*"]
 
@@ -37,6 +36,21 @@ data "aws_iam_policy_document" "ses_handler" {
     ]
 
     resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:DeleteItem",
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:ListTables",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+    ]
+
+    resources = ["${aws_dynamodb_table.ses_handler.arn}"]
   }
 
   statement {
