@@ -1,5 +1,7 @@
 provider "aws" {
   region = "us-west-2"
+
+  version = "~> 2.70"
 }
 
 resource "aws_s3_bucket" "terraform" {

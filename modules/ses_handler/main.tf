@@ -30,16 +30,16 @@ resource "aws_iam_role_policy_attachment" "ses_handler" {
 /* Create the lambda function.
  */
 resource "aws_lambda_function" "ses_handler" {
-  filename         = "${data.archive_file.ses_handler.output_path}"
-  function_name    = "ses_handler"
-  handler          = "ses_handler.ses_handler"
+  filename      = "${data.archive_file.ses_handler.output_path}"
+  function_name = "ses_handler"
+  handler       = "ses_handler.ses_handler"
   // 128M is the default memory size
   memory_size      = 128
   runtime          = "python3.7"
   role             = "${aws_iam_role.ses_handler.arn}"
   source_code_hash = "${data.archive_file.ses_handler.output_base64sha256}"
   // docs suggest setting the queue visibility timeout (default 30s) to six times the lambda timeout
-  timeout          = 5
+  timeout = 5
 }
 
 /* Create an alias for the latest version of the lambda function.
@@ -64,9 +64,9 @@ resource "aws_lambda_event_source_mapping" "ses_handler" {
 /* Create a dynamodb table.
  */
 resource "aws_dynamodb_table" "ses_handler" {
-  name           = "ses"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "email_address"
+  name         = "ses"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "email_address"
 
   attribute {
     name = "email_address"
