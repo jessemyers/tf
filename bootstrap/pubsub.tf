@@ -58,12 +58,12 @@ data "aws_iam_policy_document" "queue" {
     effect = "Allow"
 
     principals {
-      type        = "*"
+      type        = "AWS"
       identifiers = ["*"]
     }
 
     actions = [
-      "sqs:SendMessage",
+      "SQS:SendMessage",
     ]
 
     resources = [
