@@ -47,7 +47,7 @@ resource "aws_sns_topic_subscription" "queue" {
   endpoint  = aws_sqs_queue.queue.arn
 
   filter_policy = jsonencode({
-    EventType = [
+    eventType = [
       "example",
     ],
   })
@@ -55,7 +55,7 @@ resource "aws_sns_topic_subscription" "queue" {
 
 data "aws_iam_policy_document" "queue" {
   statement {
-    sid = "topic-subscription-arn:aws:sns:us-west-2:386344279939:broadcast"
+    sid    = aws_sns_topic_subscription.queue.arn
     effect = "Allow"
 
     principals {
