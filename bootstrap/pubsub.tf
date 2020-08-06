@@ -49,6 +49,7 @@ resource "aws_sns_topic_subscription" "queue" {
   filter_policy = jsonencode({
     eventType = [
       "bar",
+      "echo",
       "example",
       "foo",
     ],
